@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F1 League | First PC Gaming</title>
+  <meta name="description" content="The First PC Gaming F1 league — standings, calendar, points system and rules.">
+  <link rel="icon" href="assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="championship">
+  <header id="site-header"></header>
+
+  <main>
+    <div class="wrap page-head">
+      <span class="eyebrow">Championship</span>
+      <h1 id="champ-title"></h1>
+      <p class="muted" id="champ-season"></p>
+    </div>
+
+    <section style="padding-top:32px">
+      <div class="wrap two-col">
+        <div class="panel">
+          <h2>Driver standings</h2>
+          <div id="standings"></div>
+        </div>
+        <div style="display:grid;gap:24px">
+          <div class="panel">
+            <h2>Points system</h2>
+            <div class="points-grid" id="points-grid"></div>
+          </div>
+          <div class="panel">
+            <h2>Calendar</h2>
+            <div id="calendar"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding-top:0">
+      <div class="wrap">
+        <div class="panel">
+          <h2>Penalties &amp; warnings</h2>
+          <ul class="rules" id="rules"></ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="js/site-data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
