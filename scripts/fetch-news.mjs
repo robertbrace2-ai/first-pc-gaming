@@ -15,15 +15,37 @@ const FEEDS = {
     { source: "VideoCardz", url: "https://videocardz.com/feed" },
     { source: "TechPowerUp", url: "https://www.techpowerup.com/rss/news" },
     { source: "Tom's Hardware", url: "https://www.tomshardware.com/feeds/all" },
-    { source: "Wccftech", url: "https://wccftech.com/feed/" }
+    { source: "Wccftech", url: "https://wccftech.com/feed/" },
+    { source: "KitGuru", url: "https://www.kitguru.net/feed/" }
+  ],
+  ai: [
+    { source: "The Verge", url: "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml" },
+    { source: "Ars Technica", url: "https://arstechnica.com/ai/feed/" },
+    { source: "TechCrunch", url: "https://techcrunch.com/category/artificial-intelligence/feed/" },
+    { source: "MIT Tech Review", url: "https://www.technologyreview.com/topic/artificial-intelligence/feed" }
   ]
 };
 
 const PER_SECTION = 24;
+// First match wins, so the big three come first
 const BRANDS = [
   ["NVIDIA", /\b(nvidia|geforce|rtx|dlss)\b/i],
   ["AMD", /\b(amd|radeon|ryzen|fsr)\b/i],
-  ["Intel", /\b(intel|core ultra|arc [ab]\d{3})\b/i]
+  ["Intel", /\b(intel|core ultra|arc [ab]\d{3})\b/i],
+  ["ASUS", /\b(asus|rog|tuf gaming)\b/i],
+  ["MSI", /\bmsi\b/i],
+  ["Gigabyte", /\b(gigabyte|aorus)\b/i],
+  ["ASRock", /\basrock\b/i],
+  ["Corsair", /\bcorsair\b/i],
+  ["G.Skill", /\bg\.?skill\b/i],
+  ["Kingston", /\b(kingston|hyperx)\b/i],
+  ["Crucial", /\bcrucial\b/i],
+  ["Samsung", /\bsamsung\b/i],
+  ["OpenAI", /\b(openai|chatgpt)\b/i],
+  ["Google", /\b(google|gemini|deepmind)\b/i],
+  ["Anthropic", /\b(anthropic|claude)\b/i],
+  ["Meta", /\b(meta|llama)\b/i],
+  ["Microsoft", /\b(microsoft|copilot)\b/i]
 ];
 
 const decode = s => s
@@ -112,9 +134,10 @@ async function section(feeds) {
 const news = {
   updated: new Date().toISOString(),
   gaming: await section(FEEDS.gaming),
-  hardware: await section(FEEDS.hardware)
+  hardware: await section(FEEDS.hardware),
+  ai: await section(FEEDS.ai)
 };
 
 mkdirSync("data", { recursive: true });
 writeFileSync("data/news.json", JSON.stringify(news, null, 1));
-console.log(`Wrote ${news.gaming.length} gaming + ${news.hardware.length} hardware stories`);
+console.log(`Wrote ${news.gaming.length} gaming, ${news.hardware.length} hardware, ${news.ai.length} AI stories`);

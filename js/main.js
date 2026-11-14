@@ -97,7 +97,7 @@
         <div class="nbody">
           <div class="ntags">
             <span class="ntag">${esc(n.source)}</span>
-            ${n.brand ? `<span class="ntag ${n.brand}">${n.brand}</span>` : ""}
+            ${n.brand ? `<span class="ntag brand ${n.brand.replace(/\W/g, "")}">${esc(n.brand)}</span>` : ""}
             <span class="ntime">${ago(n.date)}</span>
           </div>
           <h3>${esc(n.title)}</h3>
@@ -108,7 +108,9 @@
   /* Auto-scrolling row: pauses on hover, click-and-drag (or swipe) to scroll by hand */
   function fillMarquee(el, items) {
     if (!el || !items || !items.length) return false;
-    const cards = items.map(newsCard).join("");
+    // Repeat short lists so one copy is always wider than the screen
+    const reps = Math.max(1, Math.ceil(2600 / (items.length * 318)));
+    const cards = items.map(newsCard).join("").repeat(reps);
     // Content is doubled so the loop is seamless
     el.innerHTML = `<div class="marquee-track">${cards}${cards}</div>`;
     const track = el.firstElementChild;
@@ -119,14 +121,19 @@
     let half = 0, x = 0, last = performance.now();
     let hover = false, down = false, dragged = false, startX = 0, startOffset = 0, resumeAt = 0;
 
-    const measure = () => { half = track.scrollWidth / 2; };
+    let started = false;
+    // Width of one copy of the cards (re-measured if the window or layout changes)
+    const measure = () => {
+      half = track.scrollWidth / 2;
+      if (half && !started) { started = true; x = dir === 1 ? -half / 2 : 0; }
+    };
     const wrap = v => half ? ((v % half) - half) % half : v;  // keep within (-half, 0]
-    measure();
-    if (dir === 1) x = -half / 2;
+    if ("ResizeObserver" in window) new ResizeObserver(measure).observe(track);
     addEventListener("resize", measure);
 
     function frame(t) {
       const dt = Math.min((t - last) / 1000, 0.1); last = t;
+      if (!half) measure();
       if (!reduced && !hover && !down && t > resumeAt) x = wrap(x + dir * SPEED * dt);
       track.style.transform = `translate3d(${x}px,0,0)`;
       requestAnimationFrame(frame);
@@ -177,11 +184,15 @@
       const res = await fetch("data/news.json", { cache: "no-cache" });
       if (!res.ok) return;
       const data = await res.json();
-      const a = fillMarquee(document.getElementById("news-gaming"), data.gaming);
-      const b = fillMarquee(document.getElementById("news-hardware"), data.hardware);
-      if (!a && !b) return;
-      if (!a) document.getElementById("news-gaming").previousElementSibling.remove();
-      if (!b) document.getElementById("news-hardware").previousElementSibling.remove();
+      section.hidden = false;
+      let any = false;
+      ["gaming", "hardware", "ai"].forEach(k => {
+        const el = document.getElementById("news-" + k);
+        if (!el) return;
+        if (fillMarquee(el, data[k])) any = true;
+        else { el.previousElementSibling.remove(); el.remove(); }   // hide empty rows
+      });
+      if (!any) { section.hidden = true; return; }
       document.getElementById("news-updated").textContent = data.updated ? `Updated ${ago(data.updated)}` : "";
       section.hidden = false;
     } catch (e) { /* no news yet — section stays hidden */ }

@@ -114,6 +114,7 @@ section { padding: 72px 0; }
 .news { background: var(--bg-2); border-block: 1px solid var(--line); overflow: hidden; }
 .news-row-label { font: 700 1.05rem var(--head); text-transform: uppercase; letter-spacing: .08em; display: flex; align-items: center; gap: 10px; margin: 8px auto 14px; }
 .news-row-label .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px rgba(255,59,48,.2); animation: pulse 2s infinite; }
+.news-row-label .dot.ai { background: #8b7bff; box-shadow: 0 0 0 4px rgba(139,123,255,.2); }
 .news-row-label .dot.hw { background: var(--accent-2); box-shadow: 0 0 0 4px rgba(255,176,32,.2); }
 @keyframes pulse { 50% { opacity: .35; } }
 .marquee {
@@ -138,9 +139,16 @@ section { padding: 72px 0; }
 .nbody h3 { margin: 8px 0 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .ntags { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 .ntag { font: 700 .72rem var(--head); text-transform: uppercase; letter-spacing: .08em; padding: 2px 8px; border-radius: 4px; background: var(--bg-2); color: var(--muted); }
+.ntag.brand { background: #2b3245; color: var(--text); }
 .ntag.NVIDIA { background: #76b900; color: #0b0d12; }
 .ntag.AMD { background: #ed1c24; color: #fff; }
 .ntag.Intel { background: #0071c5; color: #fff; }
+.ntag.ASUS, .ntag.MSI { background: #c8102e; color: #fff; }
+.ntag.Gigabyte { background: #ff6a00; color: #0b0d12; }
+.ntag.Corsair, .ntag.GSkill { background: #f4c20d; color: #0b0d12; }
+.ntag.OpenAI, .ntag.Anthropic { background: #e9ecf2; color: #0b0d12; }
+.ntag.Google { background: #4285f4; color: #fff; }
+.ntag.Meta, .ntag.Microsoft { background: #0a66c2; color: #fff; }
 .ntime { margin-left: auto; font-size: .78rem; color: var(--muted); }
 
 /* Stat strip */
