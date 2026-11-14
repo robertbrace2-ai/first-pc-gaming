@@ -11,7 +11,7 @@
   <link rel="icon" href="assets/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,500;0,600;0,700;0,800;1,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body data-page="home">
@@ -20,21 +20,16 @@
   <main>
     <!-- HERO -->
     <section class="hero">
-      <div class="wrap hero-grid">
-        <div>
-          <span class="eyebrow">PC gaming · Wales, UK</span>
-          <h1>Lights out.<br><span>Game on.</span></h1>
-          <p class="lead">Sim racing, shooters, VR and a lot of golf. Gameplay videos from me and the lads, plus our own F1 league.</p>
-          <div class="hero-actions">
-            <a class="btn" href="videos.html">▶ Watch videos</a>
-            <a class="btn btn-ghost" href="championship.html">F1 League</a>
-          </div>
-          <div class="socials" id="hero-socials"></div>
+      <div class="wrap hero-center">
+        <img class="hero-logo" src="assets/logo.png" alt="First PC Gaming"
+             onerror="this.onerror=null;this.src='https://static.wixstatic.com/media/50b668_8c96d8441afd494b9d8a422ab6ccc55d~mv2.png'">
+        <h1>Lights out. <span>Game on.</span></h1>
+        <p class="lead">Sim racing, shooters, VR and a lot of golf. Gameplay videos from me and the lads, plus our own F1 league.</p>
+        <div class="hero-actions">
+          <a class="btn" href="videos.html">▶ Watch videos</a>
+          <a class="btn btn-ghost" href="championship.html">F1 League</a>
         </div>
-        <div class="hero-logo">
-          <img src="assets/logo.png" alt="First PC Gaming logo"
-               onerror="this.onerror=null;this.src='https://static.wixstatic.com/media/50b668_8c96d8441afd494b9d8a422ab6ccc55d~mv2.png'">
-        </div>
+        <div class="socials" id="hero-socials"></div>
       </div>
     </section>
 
@@ -52,8 +47,25 @@
       </div>
     </section>
 
+    <!-- NEWS (auto-updated hourly) -->
+    <section class="news" id="news" hidden>
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Around the world</span>
+            <h2>Gaming &amp; hardware news</h2>
+          </div>
+          <span class="muted small" id="news-updated"></span>
+        </div>
+      </div>
+      <div class="news-row-label wrap"><span class="dot"></span>Gaming</div>
+      <div class="marquee" id="news-gaming"></div>
+      <div class="news-row-label wrap"><span class="dot hw"></span>Hardware <span class="muted small">· NVIDIA · AMD · Intel</span></div>
+      <div class="marquee reverse" id="news-hardware"></div>
+    </section>
+
     <!-- WHAT WE PLAY -->
-    <section style="background: var(--bg-2); border-block: 1px solid var(--line);">
+    <section>
       <div class="wrap">
         <div class="section-head">
           <div>

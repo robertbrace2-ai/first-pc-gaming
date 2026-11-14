@@ -18,7 +18,17 @@ Static site for GitHub Pages. No build step — just upload the files.
 Save the First PC Gaming logo as `assets/logo.png`. Until it's there, the site
 falls back to the copy hosted on Wix.
 
+## News section
+The home page news (gaming + NVIDIA/AMD/Intel hardware) refreshes itself every hour.
+GitHub runs `scripts/fetch-news.mjs`, which reads news sites' RSS feeds, then republishes the site.
+To change news sources, edit the `FEEDS` list at the top of that script.
+You don't need to touch `data/news.json` — it's overwritten automatically.
+
 ## Publishing (GitHub Desktop)
-1. Create a new repository called `first-pc-gaming` and copy these files into it.
-2. Commit and Publish.
-3. On github.com: Settings → Pages → Source: *Deploy from a branch*, Branch: `main` / root.
+1. Copy these files into the `first-pc-gaming` repo folder (including the `.github` folder).
+2. Commit and Push.
+3. On github.com: Settings → Pages → Source: **GitHub Actions** (one-time change).
+4. Check progress under the repo's **Actions** tab.
+
+Note: GitHub pauses hourly jobs if a repo has no commits for 60 days. If the news stops
+updating, go to Actions → "Build & deploy site" → Enable workflow / Run workflow.

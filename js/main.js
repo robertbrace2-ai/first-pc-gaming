@@ -79,6 +79,61 @@
       </a>`;
   }
 
+  /* ---------- News (data/news.json is refreshed hourly by GitHub) ---------- */
+  function ago(iso) {
+    if (!iso) return "";
+    const m = Math.round((Date.now() - new Date(iso)) / 60000);
+    if (m < 60) return `${Math.max(m, 1)}m ago`;
+    const h = Math.round(m / 60);
+    if (h < 48) return `${h}h ago`;
+    return `${Math.round(h / 24)}d ago`;
+  }
+
+  function newsCard(n) {
+    return `
+      <a class="ncard" href="${esc(n.link)}" target="_blank" rel="noopener">
+        <div class="nimg">
+          <span class="nsrc-big">${esc(n.source)}</span>
+          ${n.image ? `<img src="${esc(n.image)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ""}
+        </div>
+        <div class="nbody">
+          <div class="ntags">
+            <span class="ntag">${esc(n.source)}</span>
+            ${n.brand ? `<span class="ntag ${n.brand}">${n.brand}</span>` : ""}
+            <span class="ntime">${ago(n.date)}</span>
+          </div>
+          <h3>${esc(n.title)}</h3>
+        </div>
+      </a>`;
+  }
+
+  function fillMarquee(el, items) {
+    if (!el || !items || !items.length) return false;
+    const cards = items.map(newsCard).join("");
+    // Content is doubled so the loop is seamless
+    el.innerHTML = `<div class="marquee-track" style="--dur:${items.length * 7}s">${cards}${cards}</div>`;
+    // Tap to pause on touch screens
+    el.addEventListener("touchstart", () => el.classList.toggle("paused"), { passive: true });
+    return true;
+  }
+
+  async function loadNews() {
+    const section = document.getElementById("news");
+    if (!section) return;
+    try {
+      const res = await fetch("data/news.json", { cache: "no-cache" });
+      if (!res.ok) return;
+      const data = await res.json();
+      const a = fillMarquee(document.getElementById("news-gaming"), data.gaming);
+      const b = fillMarquee(document.getElementById("news-hardware"), data.hardware);
+      if (!a && !b) return;
+      if (!a) document.getElementById("news-gaming").previousElementSibling.remove();
+      if (!b) document.getElementById("news-hardware").previousElementSibling.remove();
+      document.getElementById("news-updated").textContent = data.updated ? `Updated ${ago(data.updated)}` : "";
+      section.hidden = false;
+    } catch (e) { /* no news yet — section stays hidden */ }
+  }
+
   /* ---------- Home page ---------- */
   if (page === "home") {
     const latest = document.getElementById("latest-videos");
@@ -96,6 +151,7 @@
           <span class="link-arrow">Visit ${esc(p.name)} →</span>
         </a>`).join("");
     }
+    loadNews();
     const cs = document.getElementById("champ-season");
     if (cs) cs.textContent = CHAMPIONSHIP.season;
     const email = document.getElementById("contact-email");
