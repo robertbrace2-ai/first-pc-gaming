@@ -6,7 +6,7 @@
   /* ---------- Shared header ---------- */
   const nav = [
     { href: "index.html", label: "Home", key: "home" },
-    { href: "videos.html", label: "Videos", key: "videos" },
+    { href: "videos.html", label: "YouTube", key: "videos" },
     { href: "championship.html", label: "Championship", key: "championship" },
     { href: "index.html#contact", label: "Contact", key: "contact" }
   ];
@@ -16,9 +16,7 @@
     header.innerHTML = `
       <div class="wrap header-inner">
         <a class="brand" href="index.html" aria-label="First PC Gaming home">
-          <img src="assets/logo.png" alt="First PC Gaming"
-               onerror="this.onerror=null;this.src='https://static.wixstatic.com/media/50b668_8c96d8441afd494b9d8a422ab6ccc55d~mv2.png'">
-          <span class="brand-text">First PC <b>Gaming</b></span>
+          <img src="assets/logo-wide.png" alt="First PC Gaming">
         </a>
         <button class="nav-toggle" aria-label="Menu" aria-expanded="false">
           <span></span><span></span><span></span>
@@ -107,13 +105,68 @@
       </a>`;
   }
 
+  /* Auto-scrolling row: pauses on hover, click-and-drag (or swipe) to scroll by hand */
   function fillMarquee(el, items) {
     if (!el || !items || !items.length) return false;
     const cards = items.map(newsCard).join("");
     // Content is doubled so the loop is seamless
-    el.innerHTML = `<div class="marquee-track" style="--dur:${items.length * 7}s">${cards}${cards}</div>`;
-    // Tap to pause on touch screens
-    el.addEventListener("touchstart", () => el.classList.toggle("paused"), { passive: true });
+    el.innerHTML = `<div class="marquee-track">${cards}${cards}</div>`;
+    const track = el.firstElementChild;
+    const dir = el.classList.contains("reverse") ? 1 : -1;   // -1 = moves left
+    const SPEED = 40;                                         // pixels per second
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    let half = 0, x = 0, last = performance.now();
+    let hover = false, down = false, dragged = false, startX = 0, startOffset = 0, resumeAt = 0;
+
+    const measure = () => { half = track.scrollWidth / 2; };
+    const wrap = v => half ? ((v % half) - half) % half : v;  // keep within (-half, 0]
+    measure();
+    if (dir === 1) x = -half / 2;
+    addEventListener("resize", measure);
+
+    function frame(t) {
+      const dt = Math.min((t - last) / 1000, 0.1); last = t;
+      if (!reduced && !hover && !down && t > resumeAt) x = wrap(x + dir * SPEED * dt);
+      track.style.transform = `translate3d(${x}px,0,0)`;
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+
+    el.addEventListener("mouseenter", () => { hover = true; });
+    el.addEventListener("mouseleave", () => { hover = false; });
+
+    el.addEventListener("pointerdown", e => {
+      if (e.button !== 0) return;
+      down = true; dragged = false; startX = e.clientX; startOffset = x;
+    });
+    addEventListener("pointermove", e => {
+      if (!down) return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 6 && !dragged) { dragged = true; el.classList.add("dragging"); }
+      if (dragged) x = wrap(startOffset + dx);
+    });
+    const end = e => {
+      if (!down) return;
+      down = false;
+      el.classList.remove("dragging");
+      // On touch screens there's no hover, so wait a moment before carrying on
+      if (e.pointerType !== "mouse") resumeAt = performance.now() + 3000;
+    };
+    addEventListener("pointerup", end);
+    addEventListener("pointercancel", end);
+
+    // A drag shouldn't open the story underneath
+    el.addEventListener("click", e => { if (dragged) { e.preventDefault(); e.stopPropagation(); dragged = false; } }, true);
+    el.addEventListener("dragstart", e => e.preventDefault());
+
+    // Sideways trackpad / shift+wheel scrolling
+    el.addEventListener("wheel", e => {
+      const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : (e.shiftKey ? e.deltaY : 0);
+      if (!d) return;
+      e.preventDefault();
+      x = wrap(x - d);
+    }, { passive: false });
     return true;
   }
 

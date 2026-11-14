@@ -24,7 +24,7 @@ const SITE = {
 const CHANNELS = [
   {
     key: "fpc",
-    name: "FPC Gaming",
+    name: "First PC Gaming",
     owner: "Rob",
     blurb: "Sim racing, golf sims and whatever else is on the rig this week.",
     channelUrl: "https://www.youtube.com/channel/UCBcSsnzO36SSn1gM9AgXeDw",
