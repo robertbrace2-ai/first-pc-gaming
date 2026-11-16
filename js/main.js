@@ -72,7 +72,7 @@
         </div>
         <div class="vmeta">
           <h3>${esc(v.title)}</h3>
-          <span class="muted small">${esc(ch.owner)}</span>
+          <span class="muted small">${esc(ch.owner)}${v.published ? " · " + ago(v.published) : ""}</span>
         </div>
       </a>`;
   }
@@ -84,7 +84,9 @@
     if (m < 60) return `${Math.max(m, 1)}m ago`;
     const h = Math.round(m / 60);
     if (h < 48) return `${h}h ago`;
-    return `${Math.round(h / 24)}d ago`;
+    const d = Math.round(h / 24);
+    if (d <= 30) return `${d}d ago`;
+    return new Date(iso).toLocaleDateString("en-GB", { month: "short", year: "numeric" });
   }
 
   function newsCard(n) {
@@ -198,15 +200,35 @@
     } catch (e) { /* no news yet — section stays hidden */ }
   }
 
+  /* ---------- Latest uploads (data/videos.json is refreshed hourly by GitHub) ---------- */
+  async function loadVideos() {
+    try {
+      const res = await fetch("data/videos.json", { cache: "no-cache" });
+      if (!res.ok) return;
+      const data = await res.json();
+      CHANNELS.forEach(ch => {
+        const auto = (data.channels || {})[ch.key];
+        if (!auto || !auto.length) return;
+        const manual = Object.fromEntries(ch.videos.map(v => [v.id, v]));
+        const merged = auto.map(v => ({ ...v, ...(manual[v.id] ? { length: manual[v.id].length } : {}) }));
+        // Keep older hand-added videos that YouTube's feed no longer lists
+        ch.videos.forEach(v => { if (!merged.some(m => m.id === v.id)) merged.push(v); });
+        ch.videos = merged;
+      });
+    } catch (e) { /* fall back to the list in site-data.js */ }
+  }
+
   /* ---------- Home page ---------- */
   if (page === "home") {
     const latest = document.getElementById("latest-videos");
-    if (latest) {
-      const picks = [];
-      CHANNELS.forEach(ch => ch.videos.slice(0, 2).forEach(v => picks.push({ v, ch })));
-      latest.innerHTML = picks.slice(0, 4)
+    if (latest) loadVideos().then(() => {
+      const all = [];
+      CHANNELS.forEach(ch => ch.videos.forEach((v, i) => all.push({ v, ch, i })));
+      // Newest first by upload date; videos without a date keep their list order
+      all.sort((a, b) => (b.v.published || "").localeCompare(a.v.published || "") || a.i - b.i);
+      latest.innerHTML = all.slice(0, 4)
         .map(({ v, ch }) => card(v, ch, `videos.html?c=${ch.key}&v=${v.id}`)).join("");
-    }
+    });
     const partners = document.getElementById("partners");
     if (partners) {
       partners.innerHTML = PARTNERS.map(p => `
@@ -225,7 +247,7 @@
   }
 
   /* ---------- Videos page ---------- */
-  if (page === "videos") {
+  if (page === "videos") loadVideos().then(() => {
     const params = new URLSearchParams(location.search);
     let current = CHANNELS.find(c => c.key === params.get("c")) || CHANNELS[0];
     let currentId = params.get("v") || current.videos[0].id;
@@ -284,7 +306,7 @@
 
     renderChannel();
     play(currentId, false);
-  }
+  });
 
   /* ---------- Championship page ---------- */
   if (page === "championship") {

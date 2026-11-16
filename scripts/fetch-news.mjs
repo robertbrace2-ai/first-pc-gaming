@@ -141,3 +141,7 @@ const news = {
 mkdirSync("data", { recursive: true });
 writeFileSync("data/news.json", JSON.stringify(news, null, 1));
 console.log(`Wrote ${news.gaming.length} gaming, ${news.hardware.length} hardware, ${news.ai.length} AI stories`);
+
+// Also refresh the YouTube uploads (see fetch-videos.mjs)
+try { await import("./fetch-videos.mjs"); }
+catch (e) { console.log(`✗ YouTube update failed: ${e.message}`); }

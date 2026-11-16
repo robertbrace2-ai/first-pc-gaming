@@ -16,7 +16,11 @@ const SITE = {
 
 /* ---------------------------------------------------------
    VIDEO CHANNELS
-   To add a video: copy a line like
+   New uploads are pulled from YouTube automatically every hour
+   for any channel with a channelUrl — you don't need to add them.
+   The lists below are a backup, and where you can add a
+   video length or keep older videos showing.
+   To add a video by hand: copy a line like
      { id: "z3Ha5D9jECE", title: "Golf", length: "3:05:31" },
    The id is the bit after "watch?v=" in the YouTube link.
    Newest videos go at the TOP of each list.
@@ -39,8 +43,9 @@ const CHANNELS = [
     name: "Andy's Channel",
     owner: "Andrew Lees",
     blurb: "Golf with the lads, Cricket 19 and the odd Ashes series.",
-    /* Paste Andy's channel link here (leave "" to hide the button) */
-    channelUrl: "",
+    /* Paste Andy's channel link here (any YouTube channel link works, e.g.
+       https://www.youtube.com/@hisname). Leave "" to hide the button. */
+    channelUrl: "https://www.youtube.com/@ajl182",
     videos: [
       { id: "kc-ZJEqHFDo", title: "Golf for Nigel", length: "50:52" },
       { id: "mmVE4aDYfPA", title: "Nigel go again!", length: "" },
